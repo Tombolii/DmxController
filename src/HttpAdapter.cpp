@@ -1,8 +1,10 @@
 #include "../include/HttpAdapter.h"
 
-
-
-void HttpAdapter::handleRequest(int requestPath, int httpMethdod)
+void HttpAdapter::handleHttpRequest(HttpIdentifier httpPathMethod)
 {
-    Serial.println("Access Point Web Server");
+    Serial.println("Handling HTTP request...");
+    Serial.print("Method: ");
+    Serial.println(httpPathMethod.httpMethod);
+    Serial.print("Path: ");
+    Serial.println(httpPathMethod.path);
 };

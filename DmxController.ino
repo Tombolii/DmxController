@@ -16,6 +16,5 @@ void setup()
 
 void loop()
 {
-  // wifiController.listenForDevices();
-  wifiController.handleBodyRequests();
+  wifiController.handleRequests();
 }

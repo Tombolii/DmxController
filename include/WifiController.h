@@ -1,17 +1,19 @@
 #ifndef WifiController_h
 #define WifiController_h
 
-#include "./arduino_secrets.h"
-#include "./LightController.h"
-#include "./HazerController.h"
-#include "../src/HttpAdapter.cpp"
+#include "arduino_secrets.h"
+#include "LightController.h"
+#include "HazerController.h"
+#include "HttpAdapter.h"
+#include "HttpIdentifier.h"
+
+#include <Arduino.h>
 #include "WiFiS3.h"
 
 class WifiController
 {
 public:
     void initializeWifi(const char *ssid, const char *pass);
-    void handleBodyRequests();
     void handleRequests();
     int status = WL_IDLE_STATUS;
     WiFiServer server = WiFiServer(80);
@@ -22,6 +24,10 @@ private:
     LightController lightController = LightController(3);
     IPAddress ipAddress = IPAddress(10, 10, 1, 1);
     void printWiFiStatus();
+    HttpIdentifier extractHttpIdentifier(String line);
+    bool isHttpMethodLine(String line);
+    bool isLineRootPath(String line);
+    void sendHTMLResponse(WiFiClient client);
 };
 
-#endif
+#endif  
