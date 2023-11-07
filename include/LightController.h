@@ -2,6 +2,8 @@
 #define LightController_h
 
 #include "../include/BaseController.h"
+#include "../include/DmxAdapter.h"
+// #include <Arduino.h>
 
 class LightController : public BaseController
 {
@@ -20,7 +22,8 @@ private:
   const int blue = 5;
   const int strobe = 6;
   const int lenses = 7;
-  int test;
+  const int address = 3;
+  DmxAdapter dmxAdapter;
 
   void setDimmer(int value);
   void setPrograms(int value);

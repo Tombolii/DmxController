@@ -2,6 +2,7 @@
 #define HazerController_h
 
 #include "../include/BaseController.h"
+#include "../include/DmxAdapter.h"
 
 class HazerController : public BaseController
 {
@@ -12,6 +13,7 @@ class HazerController : public BaseController
   private:
     const int volumeChannel = 1;
     const int fanChannel = 2;
+    DmxAdapter dmxAdapter;
 };
 
 #endif
