@@ -1,10 +1,26 @@
 #include "../include/HttpAdapter.h"
 
-void HttpAdapter::handleHttpRequest(HttpIdentifier httpPathMethod)
+String HttpAdapter::handleHttpRequest(HttpIdentifier httpIdentifier)
 {
-    Serial.println("Handling HTTP request...");
-    Serial.print("Method: ");
-    Serial.println(httpPathMethod.httpMethod);
-    Serial.print("Path: ");
-    Serial.println(httpPathMethod.path);
+    if (httpIdentifier.httpMethod == "PUT")
+    {
+        return handlePutRequest(httpIdentifier);
+    }
+    else
+    {
+        return NOT_IMPLEMENTED;
+    }
+};
+
+String HttpAdapter::handlePutRequest(HttpIdentifier httpIdentifier)
+{
+    if (httpIdentifier.path == "/hazer/state")
+    {
+        hazerController.adjustState(jsonParser.jsonToHazerState(httpIdentifier.body));
+        return OK;
+    }
+    else
+    {
+        return NOT_IMPLEMENTED;
+    }
 };

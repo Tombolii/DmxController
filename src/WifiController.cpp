@@ -73,7 +73,12 @@ void WifiController::handleRequests()
                 {
                     if (isLineRootPath(currentLine))
                     {
-                        sendHTMLResponse(client);
+                        client.println("HTTP/1.1 200 OK");
+                        client.println("Content-type:text/html");
+                        client.println();
+                        String html = String(HTML_CONTENT);
+                        client.print(html);
+                        client.println();
                         break;
                     }
 
@@ -94,10 +99,13 @@ void WifiController::handleRequests()
                             char bc = client.read();
                             body += bc;
                         }
-
-                        httpAdapter.handleHttpRequest(extractHttpIdentifier(httpIdentifierLine));
-                        client.println("HTTP/1.1 201 CREATED");
-                        break;
+                        HttpIdentifier httpIdentifier = extractHttpIdentifier(httpIdentifierLine);
+                        httpIdentifier.body = body;
+                        Serial.println(body);
+                        String responseCodeLine = httpAdapter.handleHttpRequest(httpIdentifier);
+                        // String responseCodeLine = "HTTP/1.1 200 OK";
+                        client.println(responseCodeLine);
+                        break; 
                     }
                     currentLine = "";
                 }
@@ -132,10 +140,10 @@ void WifiController::printWiFiStatus()
 }
 
 HttpIdentifier WifiController::extractHttpIdentifier(String line)
-{   
+{
     int firstSpaceIndex = line.indexOf(" ");
     String httpMethod = line.substring(0, firstSpaceIndex);
-    
+
     String requestPathLine = line.substring(firstSpaceIndex + 1);
     int secondSpaceIndex = requestPathLine.indexOf(" ");
     String requestPath = requestPathLine.substring(0, secondSpaceIndex);
@@ -151,14 +159,4 @@ bool WifiController::isHttpMethodLine(String line)
 bool WifiController::isLineRootPath(String line)
 {
     return line.startsWith("GET / ");
-}
-
-void WifiController::sendHTMLResponse(WiFiClient client)
-{
-    client.println("HTTP/1.1 200 OK");
-    client.println("Content-type:text/html");
-    client.println();
-    String html = String(HTML_CONTENT);
-    client.print(html);
-    client.println();
 }

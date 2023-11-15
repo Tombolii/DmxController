@@ -7,13 +7,12 @@ extern const char *HTML_CONTENT = R""""(
     <script>
         function makeHttpRequest() {
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "http://10.10.1.1/H", true);
+            xhr.open("PUT", "http://10.10.1.1/hazer/state", true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
             var data = {
-                name: "John Doe",
-                email: "john@example.com",
-                age: 30
+                fanLevel: 22,
+                volumeLevel: 88
             };
             var jsonData = JSON.stringify(data);
 

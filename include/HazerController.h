@@ -1,14 +1,15 @@
 #ifndef HazerController_h
 #define HazerController_h
 
-#include "../include/BaseController.h"
-#include "../include/DmxAdapter.h"
+#include "BaseController.h"
+#include "DmxAdapter.h"
+#include "HazerState.h"
 
 class HazerController : public BaseController
 {
   public:
     HazerController(int startAddress);
-    void adjustFan(int level);
+    void adjustState(HazerState hazerState);
 
   private:
     const int volumeChannel = 1;

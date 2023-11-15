@@ -2,8 +2,6 @@
 #define WifiController_h
 
 #include "arduino_secrets.h"
-#include "LightController.h"
-#include "HazerController.h"
 #include "HttpAdapter.h"
 #include "HttpIdentifier.h"
 
@@ -20,14 +18,12 @@ public:
 
 private:
     HttpAdapter httpAdapter;
-    HazerController hazerController = HazerController(1);
-    LightController lightController = LightController(3);
+
     IPAddress ipAddress = IPAddress(10, 10, 1, 1);
     void printWiFiStatus();
     HttpIdentifier extractHttpIdentifier(String line);
     bool isHttpMethodLine(String line);
     bool isLineRootPath(String line);
-    void sendHTMLResponse(WiFiClient client);
 };
 
 #endif  

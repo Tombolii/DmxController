@@ -7,6 +7,7 @@ class HttpIdentifier{
     public:
         String httpMethod;
         String path;
+        String body;
 
         HttpIdentifier(String httpMethod, String path);
 };

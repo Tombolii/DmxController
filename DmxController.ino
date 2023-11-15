@@ -1,7 +1,7 @@
 #include "./include/WifiController.h"
 #include "./include/arduino_secrets.h"
 
-WifiController wifiController;                                  
+WifiController wifiController;  
 
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
