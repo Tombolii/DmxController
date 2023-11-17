@@ -36,90 +36,101 @@ void WifiController::initializeWifi(const char *ssid, const char *pass)
     server.begin();
 
     printWiFiStatus();
+    isWifiUp = true;
 }
 
 void WifiController::handleRequests()
 {
-    if (status != WiFi.status())
+    if (isWifiUp)
     {
-        status = WiFi.status();
-
-        if (status == WL_AP_CONNECTED)
+        if (status != WiFi.status())
         {
-            Serial.println("Device connected to AP");
-        }
-        else
-        {
-            Serial.println("Device disconnected from AP");
-        }
-    }
+            status = WiFi.status();
 
-    WiFiClient client = server.available();
-
-    if (client)
-    {
-        Serial.println("new client");
-        String httpIdentifierLine;
-        String currentLine = "";
-        String body = "";
-        int contentLength;
-        while (client.connected())
-        {
-            delayMicroseconds(10); // This is required for the Arduino Nano RP2040 Connect - otherwise it will loop so fast that SPI will never be served.
-            if (client.available())
+            if (status == WL_AP_CONNECTED)
             {
-                char c = client.read();
-                if (c == '\n')
-                {
-                    if (isLineRootPath(currentLine))
-                    {
-                        client.println("HTTP/1.1 200 OK");
-                        client.println("Content-type:text/html");
-                        client.println();
-                        String html = String(HTML_CONTENT);
-                        client.print(html);
-                        client.println();
-                        break;
-                    }
-
-                    if (isHttpMethodLine(currentLine))
-                    {
-                        httpIdentifierLine = currentLine;
-                    }
-
-                    if (currentLine.startsWith("Content-Length: "))
-                    {
-                        contentLength = currentLine.substring(15, currentLine.length()).toInt();
-                    }
-
-                    if (currentLine == "")
-                    {
-                        for (int i = 0; i < contentLength; i++)
-                        {
-                            char bc = client.read();
-                            body += bc;
-                        }
-                        HttpIdentifier httpIdentifier = extractHttpIdentifier(httpIdentifierLine);
-                        httpIdentifier.body = body;
-                        Serial.println(body);
-                        String responseCodeLine = httpAdapter.handleHttpRequest(httpIdentifier);
-                        // String responseCodeLine = "HTTP/1.1 200 OK";
-                        client.println(responseCodeLine);
-                        break; 
-                    }
-                    currentLine = "";
-                }
-                else if (c != '\r')
-                {
-                    currentLine += c;
-                }
+                Serial.println("Device connected to AP");
+            }
+            else
+            {
+                Serial.println("Device disconnected from AP");
             }
         }
-        // close the connection:
-        client.stop();
-        Serial.println("client disconnected");
-        Serial.print("request: ");
-        Serial.println(body);
+
+        WiFiClient client = server.available();
+
+        if (client)
+        {
+            Serial.println("new client");
+            String httpIdentifierLine;
+            String currentLine = "";
+            String body = "";
+            int contentLength;
+            while (client.connected())
+            {
+                // delayMicroseconds(10); // This is required for the Arduino Nano RP2040 Connect - otherwise it will loop so fast that SPI will never be served.
+                if (client.available())
+                {
+                    char c = client.read();
+                    if (c == '\n')
+                    {
+                        if (isLineRootPath(currentLine))
+                        {
+                            if (client.available())
+                            {
+                                client.println("HTTP/1.1 200 OK");
+                                client.println("Content-type:text/html");
+                                client.println();
+                                String html = String(HTML_CONTENT);
+                                client.print(html);
+                                client.println();
+                            }
+
+                            break;
+                        }
+
+                        if (isHttpMethodLine(currentLine))
+                        {
+                            httpIdentifierLine = currentLine;
+                        }
+
+                        if (currentLine.startsWith("Content-Length: "))
+                        {
+                            contentLength = currentLine.substring(15, currentLine.length()).toInt();
+                        }
+
+                        if (currentLine == "")
+                        {
+                            for (int i = 0; i < contentLength; i++)
+                            {
+                                char bc = client.read();
+                                body += bc;
+                            }
+                            HttpIdentifier httpIdentifier = extractHttpIdentifier(httpIdentifierLine);
+                            httpIdentifier.body = body;
+                            Serial.println(body);
+                            String responseCodeLine = httpAdapter.handleHttpRequest(httpIdentifier);
+                            // String responseCodeLine = "HTTP/1.1 200 OK";
+                            if (client.available())
+                            {
+                                client.println(responseCodeLine);
+                            }
+                            break;
+                        }
+                        currentLine = "";
+                    }
+                    else if (c != '\r')
+                    {
+                        currentLine += c;
+                    }
+                }
+            }
+            // close the connection:
+            client.stop();
+            Serial.println("client disconnected");
+            Serial.print("request: ");
+            Serial.println(body);
+        }
     }
 }
 

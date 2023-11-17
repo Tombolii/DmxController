@@ -18,7 +18,7 @@ public:
 
 private:
     HttpAdapter httpAdapter;
-
+    bool isWifiUp = false;
     IPAddress ipAddress = IPAddress(10, 10, 1, 1);
     void printWiFiStatus();
     HttpIdentifier extractHttpIdentifier(String line);
