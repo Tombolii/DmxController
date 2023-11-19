@@ -3,8 +3,41 @@ extern const char *HTML_CONTENT = R""""(
 <html>
 
 <head>
-    <script></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        body {
+            margin: 0px;
+            font-family: 'Trebuchet MS', sans-serif;
+        }
+
+        h1 {
+            margin-top: 0.025rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .td-pr-0 {
+            padding-right: 0rem;
+        }
+
+        button {
+            width: 4rem;
+        }
+
+        .space {
+            margin-bottom: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .custom-range {
+            margin-top: 0.5rem;
+            margin-left: 1rem;
+            width: 15rem;
+        }
+
+        .container {
+            margin: 0.5rem;
+        }
+
         .sticky-top {
             position: -webkit-sticky;
             position: sticky;
@@ -12,82 +45,63 @@ extern const char *HTML_CONTENT = R""""(
             z-index: 1020
         }
 
-        .bg-dark {
-            --bs-bg-opacity: 1;
-            background-color: rgba(var(--bs-dark-rgb), var(--bs-bg-opacity)) !important
-        }
-
-        .flex-md-nowrap {
-            flex-wrap: nowrap !important
-        }
-
-        .ps-2 {
-            padding-left: .5rem !important
-        }
-
-        .mb-3 {
-            margin-bottom: 1rem !important
-        }
-
-        .col-md-2 {
-            flex: 0 0 auto;
-            width: 16.66666667%
-        }
-
-        .col-sm-3 {
-            flex: 0 0 auto;
-            width: 25%
-        }
-
-        .navbar-brand {
-            padding-top: var(--bs-navbar-brand-padding-y);
-            padding-bottom: var(--bs-navbar-brand-padding-y);
-            margin-right: var(--bs-navbar-brand-margin-end);
-            font-size: var(--bs-navbar-brand-font-size);
-            color: var(--bs-navbar-brand-color);
-            text-decoration: none;
-            white-space: nowrap
-        }
-
         .navbar {
-            --bs-navbar-padding-x: 0;
-            --bs-navbar-padding-y: 0.5rem;
-            --bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 0.65);
-            --bs-navbar-hover-color: rgba(var(--bs-emphasis-color-rgb), 0.8);
-            --bs-navbar-disabled-color: rgba(var(--bs-emphasis-color-rgb), 0.3);
-            --bs-navbar-active-color: rgba(var(--bs-emphasis-color-rgb), 1);
-            --bs-navbar-brand-padding-y: 0.3125rem;
-            --bs-navbar-brand-margin-end: 1rem;
-            --bs-navbar-brand-font-size: 1.25rem;
-            --bs-navbar-brand-color: rgba(var(--bs-emphasis-color-rgb), 1);
-            --bs-navbar-brand-hover-color: rgba(var(--bs-emphasis-color-rgb), 1);
-            --bs-navbar-nav-link-padding-x: 0.5rem;
-            --bs-navbar-toggler-padding-y: 0.25rem;
-            --bs-navbar-toggler-padding-x: 0.75rem;
-            --bs-navbar-toggler-font-size: 1.25rem;
-            --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2833, 37, 41, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
-            --bs-navbar-toggler-border-color: rgba(var(--bs-emphasis-color-rgb), 0.15);
-            --bs-navbar-toggler-border-radius: var(--bs-border-radius);
-            --bs-navbar-toggler-focus-width: 0.25rem;
-            --bs-navbar-toggler-transition: box-shadow 0.15s ease-in-out;
-            position: relative;
+            width: 100%;
+            height: 2.5rem;
+            background-color: #353535;
             display: flex;
-            flex-wrap: wrap;
+            justify-content: center;
             align-items: center;
-            justify-content: space-between;
-            padding: var(--bs-navbar-padding-y) var(--bs-navbar-padding-x)
         }
 
-        .navbar-dark,
-        .navbar[data-bs-theme=dark] {
-            --bs-navbar-color: rgba(255, 255, 255, 0.55);
-            --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
-            --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
-            --bs-navbar-active-color: #fff;
-            --bs-navbar-brand-color: #fff;
-            --bs-navbar-brand-hover-color: #fff;
-            --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
-            --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.55%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e")
+        .navbar-text {
+            color: white;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 50% 50%;
+        }
+
+        .hazer-section {
+            grid-row: 1 / 2;
+            grid-column: 1 / 2;
+        }
+
+        .light-section {
+            grid-row: 1 / 2;
+            grid-column: 2 / 3;
+        }
+
+        input[type="range"] {
+            /* Set height to create space for the thumb */
+            height: 1rem;
+            /* Customize appearance */
+            -webkit-appearance: none;
+            /* Set track color */
+            background-color: #ddd;
+            /* Change thumb border */
+        }
+
+        /* Thumb styles for WebKit browsers */
+        input[type="range"]::-webkit-slider-thumb {
+            /* Set width and height to modify the thumb size */
+            width: 20px;
+            /* Change width */
+            height: 20px;
+            /* Change height */
+            /* Set background color or other styles */
+            background-color: #007bff;
+            /* Change thumb color */
+            border: 1px solid #000000;
+            /* Change thumb border */
+            border-radius: 50%;
+            /* Make thumb circular */
+            -webkit-appearance: none;
+            /* Remove default styling */
         }
 
         .btn {
@@ -143,17 +157,49 @@ extern const char *HTML_CONTENT = R""""(
             --bs-btn-disabled-border-color: #dc3545
         }
 
-        .custom-range {
-            width: 80%;
+        .btn-success {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #198754;
+            --bs-btn-border-color: #198754;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #157347;
+            --bs-btn-hover-border-color: #146c43;
+            --bs-btn-focus-shadow-rgb: 60, 153, 110;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #146c43;
+            --bs-btn-active-border-color: #13653f;
+            --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #198754;
+            --bs-btn-disabled-border-color: #198754
+        }
+
+        .btn-primary {
+            --bs-btn-color: #fff;
+            --bs-btn-bg: #0d6efd;
+            --bs-btn-border-color: #0d6efd;
+            --bs-btn-hover-color: #fff;
+            --bs-btn-hover-bg: #0b5ed7;
+            --bs-btn-hover-border-color: #0a58ca;
+            --bs-btn-focus-shadow-rgb: 49, 132, 253;
+            --bs-btn-active-color: #fff;
+            --bs-btn-active-bg: #0a58ca;
+            --bs-btn-active-border-color: #0a53be;
+            --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+            --bs-btn-disabled-color: #fff;
+            --bs-btn-disabled-bg: #0d6efd;
+            --bs-btn-disabled-border-color: #0d6efd
         }
     </style>
     <title>Dmx Controller</title>
     <script>
+        const baseUrl = "http://10.10.1.1";
+
         function makePutRequest(url, data) {
             console.log("HTTP-PUT-Call");
             console.log(data.fanLevel);
             var xhr = new XMLHttpRequest();
-            xhr.open("PUT", url, true);
+            xhr.open("PUT", baseUrl + url, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             var jsonData = JSON.stringify(data);
             xhr.send(jsonData);
@@ -161,9 +207,9 @@ extern const char *HTML_CONTENT = R""""(
 
         window.addEventListener("load", () => {
             const fanLevelRange = document.getElementById('fanLevelRange')
-            fanLevelRange.addEventListener('change', updateFanLevelRange)
+            fanLevelRange.addEventListener('change', onUpdateFanLevelRange)
 
-            function updateFanLevelRange() {
+            function onUpdateFanLevelRange() {
                 var value = fanLevelRange.value;
                 var data = {
                     fanLevel: value
@@ -171,78 +217,77 @@ extern const char *HTML_CONTENT = R""""(
                 makePutRequest("test.test", data);
             }
         })
-
-
-
-
-
-        function makeHttpRequest() {
-            console.log("HTTP-Call")
-            var xhr = new XMLHttpRequest();
-            xhr.open("PUT", "http://10.10.1.1/hazer/state", true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
+        
+        function onUpdateColorPicker() {
+                const colorPicker = document.getElementById('colorPicker')
+                var value = colorPicker.value;
+                const hex = value.substring(1);
+                updateRGBState(
+                    parseInt(hex.substring(0, 2), 16),
+                    parseInt(hex.substring(2, 4), 16),
+                    parseInt(hex.substring(4, 6), 16)
+                )
+            }
+        function updateRGBState(red, green, blue) {
             var data = {
-                fanLevel: 22,
-                volumeLevel: 88
+                red: red,
+                green: green,
+                blue: blue
             };
-            var jsonData = JSON.stringify(data);
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Handle the response here
-                    var response = xhr.responseText;
-                    console.log(response);
-                }
-            };
-            xhr.send(jsonData);
+            makePutRequest("/light/rgb", data);
         }
     </script>
 </head>
-
 <body>
-    <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap ps-2 mb-3">
-        <a class="navbar-brand col-sm-3 col-md-2" href="#">Dmx Controller</a>
-    </nav>
+    <div class="navbar sticky-top">
+        <p class="navbar-text">DMX Controller</p>
+    </div>
     <div class="container">
-        <div class="row mb-3">
-            <div class="col">
-                <h1>Hazer</h1></br>
-                <button class="btn btn-danger" onclick="makeHttpRequest()">STOP</button>
+        <div class="grid-container">
+            <div class="hazer-section">
+                <h1>Hazer</h1>
+                <button class="space btn btn-danger" onclick="makeHttpRequest()">STOP</button>
+                <button class="space btn btn-success" onclick="makeHttpRequest()">START</button>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="fanLevelRange"><b>Fan level</b></label>
+                        </td>
+                        <td>
+                            <input type="range" class="custom-range" id="fanLevelRange" min="0" max="255">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="volumeLevelRange"><b>Volume level</b></label>
+                        </td>
+                        <td>
+                            <input type="range" class="custom-range" id="volumeLevelRange" min="0" max="255">
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <div class="col">
-                <h1>Light</h1></br>
-                <button class="btn btn-danger" onclick="makeHttpRequest()">STOP</button>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col-4">
-                        <label for="fanLevelRange"><b>Fan level</b></label>
-                    </div>
-                    <div class="col-8">
-                        <input type="range" class="form-range vertical-range custom-range h-100" id="fanLevelRange"
-                            min="0" max="255">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-4">
-                        <label for="volumeLevelRange"><b>Volume level</b></label>
-                    </div>
-                    <div class="col-8">
-                        <input type="range" class="form-range vertical-range" id="volumeLevelRange" min="0" max="255">
-                    </div>
-                </div>
-            </div>
-            <div class="col">
+            <div class="light-section">
+                <h1>Light</h1>
+                <table>
+                    <tr>
+                        <td>
+                            <button class="space btn btn-danger" onclick="updateRGBState(0, 0, 0)">STOP</button><br />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="space btn btn-primary" onclick="onUpdateColorPicker()">LIGHT</button>
+                        </td>
+                        <td>
+                            <label for="colorPicker"><b>RGB </b></label>
+                            <input class="space" type="color" id="colorPicker">
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
-
-
-
 </body>
 
 </html>

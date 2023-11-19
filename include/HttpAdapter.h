@@ -15,11 +15,13 @@ public:
     String handleHttpRequest(HttpIdentifier httpIdentifier);
 
 private:
+    const String ROOT_RESPONSE = "ROOT";
     HazerController hazerController = HazerController(1);
     LightController lightController = LightController(3);
     JsonParser jsonParser;
 
     String handlePutRequest(HttpIdentifier httpIdentifier);
+    String handleGetRequest(HttpIdentifier httpIdentifier);
 };
 
 #endif

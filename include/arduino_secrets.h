@@ -1,2 +1,2 @@
 #define SECRET_SSID "DmxController"
-#define SECRET_PASS "blechle123"
+#define SECRET_PASS "rudivöller123"

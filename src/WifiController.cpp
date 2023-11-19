@@ -36,101 +36,102 @@ void WifiController::initializeWifi(const char *ssid, const char *pass)
     server.begin();
 
     printWiFiStatus();
-    isWifiUp = true;
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void WifiController::handleRequests()
 {
-    if (isWifiUp)
+    if (status != WiFi.status())
     {
-        if (status != WiFi.status())
-        {
-            status = WiFi.status();
+        status = WiFi.status();
 
-            if (status == WL_AP_CONNECTED)
-            {
-                Serial.println("Device connected to AP");
-            }
-            else
-            {
-                Serial.println("Device disconnected from AP");
-            }
+        if (status == WL_AP_CONNECTED)
+        {
+            Serial.println("Device connected to AP");
         }
-
-        WiFiClient client = server.available();
-
-        if (client)
+        else
         {
-            Serial.println("new client");
-            String httpIdentifierLine;
-            String currentLine = "";
-            String body = "";
-            int contentLength;
-            while (client.connected())
+            Serial.println("Device disconnected from AP");
+        }
+    }
+
+    WiFiClient client = server.available();
+
+    if (client)
+    {
+        Serial.println("new client");
+        String httpIdentifierLine;
+        String currentLine = "";
+        String body = "";
+        int contentLength = 0;
+        while (client.connected())
+        {
+            // delayMicroseconds(10); // This is required for the Arduino Nano RP2040 Connect - otherwise it will loop so fast that SPI will never be served.
+            if (client.available())
             {
-                // delayMicroseconds(10); // This is required for the Arduino Nano RP2040 Connect - otherwise it will loop so fast that SPI will never be served.
-                if (client.available())
+                char c = client.read();
+                if (c == '\n')
                 {
-                    char c = client.read();
-                    if (c == '\n')
+                    if (isLineRootPath(currentLine))
                     {
-                        if (isLineRootPath(currentLine))
-                        {
-                            if (client.available())
-                            {
-                                client.println("HTTP/1.1 200 OK");
-                                client.println("Content-type:text/html");
-                                client.println();
-                                String html = String(HTML_CONTENT);
-                                client.print(html);
-                                client.println();
-                            }
+                        Serial.println("Line is root path");
+                        client.println("HTTP/1.1 200 OK");
+                        client.println("Content-type:text/html");
+                        client.println();
+                        String html = String(HTML_CONTENT);
+                        client.print(html);
+                        client.println();
+                        Serial.println("Sent response");
 
-                            break;
-                        }
+                        break;
+                    }
 
-                        if (isHttpMethodLine(currentLine))
-                        {
-                            httpIdentifierLine = currentLine;
-                        }
+                    if (isHttpMethodLine(currentLine))
+                    {
+                        Serial.print("Line is method line: ");
+                        Serial.println(currentLine);
+                        httpIdentifierLine = currentLine;
+                    }
 
-                        if (currentLine.startsWith("Content-Length: "))
-                        {
-                            contentLength = currentLine.substring(15, currentLine.length()).toInt();
-                        }
+                    if (currentLine.startsWith("Content-Length: "))
+                    {
+                        contentLength = currentLine.substring(15, currentLine.length()).toInt();
+                    }
 
-                        if (currentLine == "")
+                    if (currentLine == "")
+                    {
+                        Serial.println("Received empty line, verifying content length");
+                        if (contentLength != 0)
                         {
+                            Serial.println("Reading body");
                             for (int i = 0; i < contentLength; i++)
                             {
                                 char bc = client.read();
                                 body += bc;
                             }
-                            HttpIdentifier httpIdentifier = extractHttpIdentifier(httpIdentifierLine);
-                            httpIdentifier.body = body;
-                            Serial.println(body);
-                            String responseCodeLine = httpAdapter.handleHttpRequest(httpIdentifier);
-                            // String responseCodeLine = "HTTP/1.1 200 OK";
-                            if (client.available())
-                            {
-                                client.println(responseCodeLine);
-                            }
-                            break;
                         }
-                        currentLine = "";
+                        Serial.println("Handling request");
+                        HttpIdentifier httpIdentifier = extractHttpIdentifier(httpIdentifierLine);
+                        httpIdentifier.body = body;
+                        Serial.println(body);
+                        String responseCodeLine = httpAdapter.handleHttpRequest(httpIdentifier);
+                        client.println(responseCodeLine);
+                        break;
                     }
-                    else if (c != '\r')
-                    {
-                        currentLine += c;
-                    }
+                    currentLine = "";
+                }
+                else if (c != '\r')
+                {
+                    currentLine += c;
                 }
             }
-            // close the connection:
-            client.stop();
-            Serial.println("client disconnected");
-            Serial.print("request: ");
-            Serial.println(body);
         }
+        // close the connection:
+        client.stop();
+        Serial.println("client disconnected");
+        Serial.print("request: ");
+        Serial.println(body);
     }
 }
 

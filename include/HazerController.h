@@ -13,7 +13,7 @@ class HazerController : public BaseController
 
   private:
     const int volumeChannel = 1;
-    const int fanChannel = 2;
+    const int fanChannel = 0;
     DmxAdapter dmxAdapter;
 };
 

@@ -1,9 +1,9 @@
 #ifndef LightController_h
 #define LightController_h
 
-#include "../include/BaseController.h"
-#include "../include/DmxAdapter.h"
-// #include <Arduino.h>
+#include "BaseController.h"
+#include "DmxAdapter.h"
+# include "RGBState.h"
 
 class LightController : public BaseController
 {
@@ -12,16 +12,16 @@ public:
   void lightGreen();
   void lightBlue();
   void lightRed();
-  void lightRGB(int red, int green, int blue);
+  void lightRGB(RGBState rgbState);
 
 private:
-  const int dimmer = 1;
-  const int programs = 2;
-  const int red = 3;
-  const int green = 4;
-  const int blue = 5;
-  const int strobe = 6;
-  const int lenses = 7;
+  const int dimmer = 0;
+  const int programs = 1;
+  const int red = 2;
+  const int green = 3;
+  const int blue = 4;
+  const int strobe = 5;
+  const int lenses = 6;
   const int address = 3;
   DmxAdapter dmxAdapter;
 
