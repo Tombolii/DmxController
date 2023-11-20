@@ -1,7 +1,6 @@
 extern const char *HTML_CONTENT = R""""(
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -32,6 +31,15 @@ extern const char *HTML_CONTENT = R""""(
             margin-top: 0.5rem;
             margin-left: 1rem;
             width: 15rem;
+        }
+
+        .custom-number-input{
+            margin-top: 0.5rem;
+            margin-left: 1rem;
+        }
+
+        .interval-button{
+            width: 6rem;
         }
 
         .container {
@@ -77,31 +85,18 @@ extern const char *HTML_CONTENT = R""""(
         }
 
         input[type="range"] {
-            /* Set height to create space for the thumb */
             height: 1rem;
-            /* Customize appearance */
             -webkit-appearance: none;
-            /* Set track color */
             background-color: #ddd;
-            /* Change thumb border */
         }
 
-        /* Thumb styles for WebKit browsers */
         input[type="range"]::-webkit-slider-thumb {
-            /* Set width and height to modify the thumb size */
             width: 20px;
-            /* Change width */
             height: 20px;
-            /* Change height */
-            /* Set background color or other styles */
             background-color: #007bff;
-            /* Change thumb color */
             border: 1px solid #000000;
-            /* Change thumb border */
             border-radius: 50%;
-            /* Make thumb circular */
             -webkit-appearance: none;
-            /* Remove default styling */
         }
 
         .btn {
@@ -197,7 +192,6 @@ extern const char *HTML_CONTENT = R""""(
 
         function makePutRequest(url, data) {
             console.log("HTTP-PUT-Call");
-            console.log(data.fanLevel);
             var xhr = new XMLHttpRequest();
             xhr.open("PUT", baseUrl + url, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -207,14 +201,18 @@ extern const char *HTML_CONTENT = R""""(
 
         window.addEventListener("load", () => {
             const fanLevelRange = document.getElementById('fanLevelRange')
-            fanLevelRange.addEventListener('change', onUpdateFanLevelRange)
+            fanLevelRange.addEventListener('change', onUpdateLevelRange)
+            const volumeLevelRange = document.getElementById('volumeLevelRange')
+            volumeLevelRange.addEventListener('change', onUpdateLevelRange)
 
-            function onUpdateFanLevelRange() {
-                var value = fanLevelRange.value;
+            function onUpdateLevelRange() {
+                var fanValue = fanLevelRange.value;
+                var volumeValue = volumeLevelRange.value;
                 var data = {
-                    fanLevel: value
+                    fanLevel: fanValue,
+                    volumeLevel: volumeValue
                 };
-                makePutRequest("test.test", data);
+                makePutRequest("/hazer/state", data);
             }
         })
         
@@ -236,6 +234,38 @@ extern const char *HTML_CONTENT = R""""(
             };
             makePutRequest("/light/rgb", data);
         }
+
+        function stopHazer(){
+            var data = {
+                    fanLevel: 0,
+                    volumeLevel: 0
+                };
+                makePutRequest("/hazer/state", data);
+        }
+
+        function startHazerInterval(){
+            var duration = document.getElementById('intervalDuration').value;
+            var hazerInterval = document.getElementById('intervalHazerInterval').value;
+            var offInterval = document.getElementById('intervalOffInterval').value;
+            var fanLevelRange = document.getElementById('fanLevelRange').value;
+            var volumeLevelRange = document.getElementById('volumeLevelRange').value;
+
+            if (hazerInterval > duration || offInterval > duration){
+                alert("Interval must be smaller than duration!");
+                return;
+            }
+
+            console.log("Duration: " + duration);
+
+            var data = {
+                duration: duration,
+                offTime: offInterval,
+                hazeTime: hazerInterval,
+                fanLevel: fanLevelRange,
+                volumeLevel: volumeLevelRange              
+            };
+            makePutRequest("/hazer/interval", data);
+        }
     </script>
 </head>
 <body>
@@ -246,8 +276,9 @@ extern const char *HTML_CONTENT = R""""(
         <div class="grid-container">
             <div class="hazer-section">
                 <h1>Hazer</h1>
-                <button class="space btn btn-danger" onclick="makeHttpRequest()">STOP</button>
+                <button class="space btn btn-danger" onclick="stopHazer()">STOP</button>
                 <button class="space btn btn-success" onclick="makeHttpRequest()">START</button>
+                <button class="space interval-button btn btn-primary" onclick="startHazerInterval()">INTERVAL</button>
                 <table>
                     <tr>
                         <td>
@@ -264,6 +295,18 @@ extern const char *HTML_CONTENT = R""""(
                         <td>
                             <input type="range" class="custom-range" id="volumeLevelRange" min="0" max="255">
                         </td>
+                    </tr>
+                    <tr>
+                        <td><label for="intervalDuration"><b>Duration (s)</b></label></td>
+                        <td><input class="custom-number-input" type="number" id="intervalDuration" placeholder="60"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="intervalHazerInterval"><b>Hazer-Interval (s)</b></label></td>
+                        <td><input class="custom-number-input" type="number" id="intervalHazerInterval" placeholder="10"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="intervalOffInterval"><b>Off-Interval (s)</b></label></td>
+                        <td><input class="custom-number-input" type="number" id="intervalOffInterval" placeholder="20"></td>
                     </tr>
                 </table>
             </div>

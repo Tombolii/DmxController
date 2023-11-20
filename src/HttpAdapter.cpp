@@ -29,6 +29,10 @@ String HttpAdapter::handlePutRequest(HttpIdentifier httpIdentifier)
     {
         lightController.lightRGB(jsonParser.jsonToRGBState(httpIdentifier.body));
         return OK;
+    }else if (httpIdentifier.path == "/hazer/interval")
+    {
+        hazerController.startTimer(jsonParser.jsonToHazerInterval(httpIdentifier.body));
+        return OK;
     }
     
     else

@@ -5,7 +5,7 @@
 #include "DmxAdapter.h"
 # include "RGBState.h"
 
-class LightController : public BaseController
+class LightController
 {
 public:
   LightController(int startAddress);
@@ -22,7 +22,7 @@ private:
   const int blue = 4;
   const int strobe = 5;
   const int lenses = 6;
-  const int address = 3;
+  int address;
   DmxAdapter dmxAdapter;
 
   void setDimmer(int value);
@@ -32,6 +32,7 @@ private:
   void setBlue(int value);
   void setStrobe(int value);
   void setLenses(int value);
+  bool validateValue(int value);
 };
 
 #endif

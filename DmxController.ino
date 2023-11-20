@@ -17,4 +17,5 @@ void setup()
 void loop()
 {
   wifiController.handleRequests();
+  HazerController::checkTimer();
 }

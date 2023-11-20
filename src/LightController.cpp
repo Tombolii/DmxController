@@ -1,7 +1,8 @@
 #include "../include/LightController.h"
 
-LightController::LightController(int startAddress) : BaseController(startAddress)
+LightController::LightController(int startAddress)
 {
+    this->address = startAddress;
 }
 
 void LightController::lightGreen()
@@ -106,4 +107,9 @@ void LightController::setLenses(int value)
     {
         dmxAdapter.write(address + lenses, value);
     }
+}
+
+bool LightController::validateValue(int value)
+{
+    return (value <= 255 && value >= 0);
 }
