@@ -35,6 +35,10 @@ void WifiController::initializeWifi(const char *ssid, const char *pass)
 
     server.begin();
 
+    htmlContent = String(HTML_CONTENT);
+
+    delay(10000);
+
     printWiFiStatus();
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
@@ -79,11 +83,8 @@ void WifiController::handleRequests()
                         client.println("HTTP/1.1 200 OK");
                         client.println("Content-type:text/html");
                         client.println();
-                        String html = String(HTML_CONTENT);
-                        client.print(html);
+                        client.print(htmlContent);
                         client.println();
-                        Serial.println("Sent response");
-
                         break;
                     }
 

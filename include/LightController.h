@@ -3,16 +3,15 @@
 
 #include "BaseController.h"
 #include "DmxAdapter.h"
-# include "RGBState.h"
+#include "RGBState.h"
+#include "LightPreset.h"
 
 class LightController
 {
 public:
   LightController(int startAddress);
-  void lightGreen();
-  void lightBlue();
-  void lightRed();
   void lightRGB(RGBState rgbState);
+  void startPreset(LightPreset preset);
 
 private:
   const int dimmer = 0;
@@ -33,6 +32,7 @@ private:
   void setStrobe(int value);
   void setLenses(int value);
   bool validateValue(int value);
+  int getProgram(int preset);
 };
 
 #endif

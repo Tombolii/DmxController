@@ -76,6 +76,11 @@ void HazerController::startTimer(HazerInterval hazerInterval)
     HazerController::hazerInterval = hazerInterval;
 }
 
+void HazerController::stopTimer()
+{
+    HazerController::hazerInterval = HazerInterval(0, 0, 0, 0, 0);
+}
+
 bool HazerController::validateValue(int value)
 {
     return (value <= 255 && value >= 0);

@@ -5,45 +5,11 @@ LightController::LightController(int startAddress)
     this->address = startAddress;
 }
 
-void LightController::lightGreen()
-{
-    // Serial.println("Lighting green");
-    dmxAdapter.write(3, 255);
-    dmxAdapter.write(4, 0);
-    dmxAdapter.write(5, 0);
-    dmxAdapter.write(6, 255);
-    dmxAdapter.write(7, 0);
-    dmxAdapter.write(8, 0);
-    dmxAdapter.write(9, 0);
-}
-
-void LightController::lightRed()
-{
-    dmxAdapter.write(3, 255); // DIMMER
-    dmxAdapter.write(4, 0);   // PROGRAMME
-    dmxAdapter.write(5, 255); // ROT
-    dmxAdapter.write(6, 0);   // GRÜN
-    dmxAdapter.write(7, 0);   // BLAU
-    dmxAdapter.write(8, 0);   // STROBE
-    dmxAdapter.write(9, 0);   // LINSEN
-}
-
-void LightController::lightBlue()
-{
-    dmxAdapter.write(3, 255);
-    dmxAdapter.write(4, 0);
-    dmxAdapter.write(5, 0);
-    dmxAdapter.write(6, 0);
-    dmxAdapter.write(7, 255);
-    dmxAdapter.write(8, 0);
-    dmxAdapter.write(9, 0);
-}
-
 void LightController::lightRGB(RGBState rgbState)
 {
-    if (validateValue(rgbState.red) && validateValue(rgbState.green) && validateValue(rgbState.blue))
+    if (validateValue(rgbState.red) && validateValue(rgbState.green) && validateValue(rgbState.blue) && validateValue(rgbState.dimmer))
     {
-        setDimmer(255);
+        setDimmer(rgbState.dimmer);
         setPrograms(0);
         setRed(rgbState.red);
         setGreen(rgbState.green);
@@ -51,7 +17,37 @@ void LightController::lightRGB(RGBState rgbState)
         setStrobe(0);
         setLenses(0);
     }
- }
+}
+
+void LightController::startPreset(LightPreset preset)
+{
+    int value = getProgram(preset.presetId);
+    if (value != 0)
+    {
+        setDimmer(255);
+        setPrograms(value);
+        setRed(0);
+        setGreen(0);
+        setBlue(0);
+        setStrobe(0);
+        setLenses(0);
+    }
+}
+
+int LightController::getProgram(int preset)
+{
+    switch (preset)
+    {
+    case 11:
+        // MUSIC MIC
+        return 252;
+    case 9:
+        // RANDOM STROBE
+        return 220;
+    default:
+        return 0;
+    }
+}
 
 void LightController::setDimmer(int value)
 {

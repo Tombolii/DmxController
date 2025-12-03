@@ -10,12 +10,14 @@ class HazerController
 {
   public:
     HazerController(int startAddress);
-    void adjustState(HazerState hazerState);
-    static void checkTimer();
-    static void startTimer(HazerInterval hazerInterval);
     static HazerInterval hazerInterval;
     static int startTime;
     static int duration;
+    static void checkTimer();
+    static void startTimer(HazerInterval hazerInterval);
+    static void stopTimer();
+    void adjustState(HazerState hazerState);
+    
 
   private:
     static int volumeChannel;

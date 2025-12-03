@@ -22,6 +22,7 @@ private:
 
     String handlePutRequest(HttpIdentifier httpIdentifier);
     String handleGetRequest(HttpIdentifier httpIdentifier);
+    String handleDeleteRequest(HttpIdentifier httpIdentifier);
 };
 
 #endif

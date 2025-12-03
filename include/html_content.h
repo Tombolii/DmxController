@@ -1,6 +1,7 @@
 extern const char *HTML_CONTENT = R""""(
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -27,18 +28,22 @@ extern const char *HTML_CONTENT = R""""(
             margin-right: 0.5rem;
         }
 
+        .space-1 {
+            margin-bottom: 1rem;
+        }
+
         .custom-range {
             margin-top: 0.5rem;
             margin-left: 1rem;
             width: 15rem;
         }
 
-        .custom-number-input{
+        .custom-number-input {
             margin-top: 0.5rem;
             margin-left: 1rem;
         }
 
-        .interval-button{
+        .button-2 {
             width: 6rem;
         }
 
@@ -74,14 +79,33 @@ extern const char *HTML_CONTENT = R""""(
             grid-template-columns: 50% 50%;
         }
 
-        .hazer-section {
-            grid-row: 1 / 2;
-            grid-column: 1 / 2;
+        @media only screen and (orientation: landscape) {
+            .hazer-section {
+                grid-row: 1 / 2;
+                grid-column: 1 / 2;
+            }
         }
 
-        .light-section {
-            grid-row: 1 / 2;
-            grid-column: 2 / 3;
+        @media only screen and (orientation: portrait) {
+            .hazer-section {
+                grid-row: 1 / 2;
+                grid-column: 1 / 3;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media only screen and (orientation: landscape) {
+            .light-section {
+                grid-row: 1 / 2;
+                grid-column: 2 / 3;
+            }
+        }
+
+        @media only screen and (orientation: portrait) {
+            .light-section {
+                grid-row: 2 / 3;
+                grid-column: 1 / 3;
+            }
         }
 
         input[type="range"] {
@@ -190,67 +214,59 @@ extern const char *HTML_CONTENT = R""""(
     <script>
         const baseUrl = "http://10.10.1.1";
 
-        function makePutRequest(url, data) {
+        function makeHTTPRequest(method, url, data) {
             console.log("HTTP-PUT-Call");
             var xhr = new XMLHttpRequest();
-            xhr.open("PUT", baseUrl + url, true);
+            xhr.open(method, baseUrl + url, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             var jsonData = JSON.stringify(data);
             xhr.send(jsonData);
         }
 
-        window.addEventListener("load", () => {
-            const fanLevelRange = document.getElementById('fanLevelRange')
-            fanLevelRange.addEventListener('change', onUpdateLevelRange)
-            const volumeLevelRange = document.getElementById('volumeLevelRange')
-            volumeLevelRange.addEventListener('change', onUpdateLevelRange)
-
-            function onUpdateLevelRange() {
-                var fanValue = fanLevelRange.value;
-                var volumeValue = volumeLevelRange.value;
-                var data = {
-                    fanLevel: fanValue,
-                    volumeLevel: volumeValue
-                };
-                makePutRequest("/hazer/state", data);
-            }
-        })
-        
         function onUpdateColorPicker() {
-                const colorPicker = document.getElementById('colorPicker')
-                var value = colorPicker.value;
-                const hex = value.substring(1);
-                updateRGBState(
-                    parseInt(hex.substring(0, 2), 16),
-                    parseInt(hex.substring(2, 4), 16),
-                    parseInt(hex.substring(4, 6), 16)
-                )
-            }
-        function updateRGBState(red, green, blue) {
+            const colorPicker = document.getElementById('colorPicker').value;
+            const dimmerValue = document.getElementById('lightDimmer').value;
+            const hex = colorPicker.substring(1);
+            updateRGBState(
+                parseInt(hex.substring(0, 2), 16),
+                parseInt(hex.substring(2, 4), 16),
+                parseInt(hex.substring(4, 6), 16),
+                dimmerValue
+            )
+        }
+        function updateRGBState(red, green, blue, dimmer) {
             var data = {
                 red: red,
                 green: green,
-                blue: blue
+                blue: blue,
+                dimmer: dimmer
             };
-            makePutRequest("/light/rgb", data);
+            makeHTTPRequest("PUT", "/light/rgb", data);
         }
 
-        function stopHazer(){
+        function startPreset(presetId){
             var data = {
-                    fanLevel: 0,
-                    volumeLevel: 0
-                };
-                makePutRequest("/hazer/state", data);
+                presetId: presetId
+            };
+            makeHTTPRequest("PUT", "/light/preset", data);
         }
 
-        function startHazerInterval(){
+        function startPresetMusic(){
+            startPreset(11);
+        }
+
+        function startPresetRandom(){
+            startPreset(9);
+        }
+
+        function startHazerInterval() {
             var duration = document.getElementById('intervalDuration').value;
             var hazerInterval = document.getElementById('intervalHazerInterval').value;
             var offInterval = document.getElementById('intervalOffInterval').value;
             var fanLevelRange = document.getElementById('fanLevelRange').value;
             var volumeLevelRange = document.getElementById('volumeLevelRange').value;
 
-            if (hazerInterval > duration || offInterval > duration){
+            if (hazerInterval > duration || offInterval > duration) {
                 alert("Interval must be smaller than duration!");
                 return;
             }
@@ -262,12 +278,34 @@ extern const char *HTML_CONTENT = R""""(
                 offTime: offInterval,
                 hazeTime: hazerInterval,
                 fanLevel: fanLevelRange,
-                volumeLevel: volumeLevelRange              
+                volumeLevel: volumeLevelRange
             };
-            makePutRequest("/hazer/interval", data);
+            makeHTTPRequest("PUT", "/hazer/interval", data);
+        }
+
+        function startHazer() {
+            var fanLevel = document.getElementById('fanLevelRange').value;
+            var volumeLevel = document.getElementById('volumeLevelRange').value;
+
+            var data = {
+                fanLevel: fanLevel,
+                volumeLevel: volumeLevel
+            };
+
+            makeHTTPRequest("PUT", "/hazer/state", data);
+        }
+
+        function stopHazer() {
+            var data = {
+                fanLevel: 0,
+                volumeLevel: 0
+            };
+            makeHTTPRequest("PUT", "/hazer/state", data);
+            makeHTTPRequest("DELETE", "/hazer/interval", null);
         }
     </script>
 </head>
+
 <body>
     <div class="navbar sticky-top">
         <p class="navbar-text">DMX Controller</p>
@@ -277,8 +315,8 @@ extern const char *HTML_CONTENT = R""""(
             <div class="hazer-section">
                 <h1>Hazer</h1>
                 <button class="space btn btn-danger" onclick="stopHazer()">STOP</button>
-                <button class="space btn btn-success" onclick="makeHttpRequest()">START</button>
-                <button class="space interval-button btn btn-primary" onclick="startHazerInterval()">INTERVAL</button>
+                <button class="space btn btn-success" onclick="startHazer()">START</button>
+                <button class="space button-2 btn btn-primary" onclick="startHazerInterval()">INTERVAL</button>
                 <table>
                     <tr>
                         <td>
@@ -298,15 +336,18 @@ extern const char *HTML_CONTENT = R""""(
                     </tr>
                     <tr>
                         <td><label for="intervalDuration"><b>Duration (s)</b></label></td>
-                        <td><input class="custom-number-input" type="number" id="intervalDuration" placeholder="60"></td>
+                        <td><input class="custom-number-input" type="number" id="intervalDuration" placeholder="60">
+                        </td>
                     </tr>
                     <tr>
                         <td><label for="intervalHazerInterval"><b>Hazer-Interval (s)</b></label></td>
-                        <td><input class="custom-number-input" type="number" id="intervalHazerInterval" placeholder="10"></td>
+                        <td><input class="custom-number-input" type="number" id="intervalHazerInterval"
+                                placeholder="10"></td>
                     </tr>
                     <tr>
                         <td><label for="intervalOffInterval"><b>Off-Interval (s)</b></label></td>
-                        <td><input class="custom-number-input" type="number" id="intervalOffInterval" placeholder="20"></td>
+                        <td><input class="custom-number-input" type="number" id="intervalOffInterval" placeholder="20">
+                        </td>
                     </tr>
                 </table>
             </div>
@@ -315,7 +356,7 @@ extern const char *HTML_CONTENT = R""""(
                 <table>
                     <tr>
                         <td>
-                            <button class="space btn btn-danger" onclick="updateRGBState(0, 0, 0)">STOP</button><br />
+                            <button class="space btn btn-danger" onclick="updateRGBState(0, 0, 0)">OFF</button><br />
                         </td>
                     </tr>
                     <tr>
@@ -325,6 +366,30 @@ extern const char *HTML_CONTENT = R""""(
                         <td>
                             <label for="colorPicker"><b>RGB </b></label>
                             <input class="space" type="color" id="colorPicker">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="lightDimmer"><b>Light dimmer</b></label>
+                        </td>
+                        <td>
+                            <input type="range" class="custom-range" id="lightDimmer" min="0" max="255" value="255">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="space-1">
+                               <h2>Presets</h2>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button class="space btn btn-primary" onclick="startPresetMusic()">MUSIC</button>
+                        </td>
+                        <td>
+                            <button class="space button-2 btn btn-primary"
+                                onclick="startPresetRandom()">RANDOM</button>
                         </td>
                     </tr>
                 </table>

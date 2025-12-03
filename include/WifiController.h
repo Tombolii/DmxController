@@ -6,7 +6,7 @@
 #include "HttpIdentifier.h"
 
 #include <Arduino.h>
-#include "WiFiS3.h"
+#include <WiFiS3.h>
 
 class WifiController
 {
@@ -19,6 +19,7 @@ public:
 private:
     HttpAdapter httpAdapter;
     IPAddress ipAddress = IPAddress(10, 10, 1, 1);
+    String htmlContent;
     void printWiFiStatus();
     HttpIdentifier extractHttpIdentifier(String line);
     bool isHttpMethodLine(String line);
